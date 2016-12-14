@@ -174,8 +174,10 @@ class Othello(object):
             self.board[x][y] = player
             for tx, ty in result:
                 self.reverse_cell(player, x, y, tx, ty)
-        
-o = Othello(True)
-o.board
-o.reverse_cell('1',5,4,3,4)
-o.board
+        else:
+            print "Bad Operation."
+            
+#o = Othello(True)
+#o.board
+#o.reverse_cell('1',5,4,3,4)
+#o.board
