@@ -3,7 +3,12 @@ from Othello import *
 
 class OthelloGUI:
     def __init__(self, master):
-        self.gamehost = Othello(False)
+        self.gamehost = Othello(True)
+        self.ai = None
+        self.vsai = tk.IntVar()
+        self.aifirst = tk.IntVar()
+        self.current_piece = self.gamehost.black_piece
+        self.player = 'P1'
         
         self.width = 700
         self.height = 700
@@ -54,19 +59,21 @@ class OthelloGUI:
         self.funcboard = tk.Frame(self.master)
         self.funcboard.pack(fill=tk.X, side=tk.BOTTOM)
         
-        self.aifirst = tk.IntVar()
+        self.gamehost.aifirst = tk.IntVar()
+        self.aicb = tk.Checkbutton(self.funcboard, text="Vs. AI", variable=self.vsai, command=self.click_on_change_first_hand)
         self.firstcb = tk.Checkbutton(self.funcboard, text="AI first", variable=self.aifirst, command=self.click_on_change_first_hand)
         self.undobtn = tk.Button(self.funcboard, text='Undo', command=self.click_on_undo)
-        self.startbtn = tk.Button(self.funcboard, text='Start', command=self.click_on_start)
+        self.startbtn = tk.Button(self.funcboard, text='New Game', command=self.click_on_start)
         
         self.funcboard.columnconfigure(0, weight=1)
         self.funcboard.columnconfigure(1, weight=1)
         self.funcboard.columnconfigure(2, weight=1)
         self.funcboard.columnconfigure(3, weight=1)
-
-        self.firstcb.grid(row=1, column=0)
-        self.startbtn.grid(row=1, column=1)
-        self.undobtn.grid(row=1, column=2)
+        
+        self.firstcb.grid(row=1, column=1)
+        self.firstcb.grid(row=1, column=1)
+        self.startbtn.grid(row=1, column=2)
+        self.undobtn.grid(row=1, column=3)
 
     def refresh_game_board(self):
         self.canvas.delete("all")
@@ -92,23 +99,37 @@ class OthelloGUI:
         tr = 0.9*0.5 * self.widthgap
         self.canvas.create_oval(tx-tr, ty-tr, tx+tr,ty+tr, fill=color, width=1)
     
+    """
+    GUI Events
+    """
     def click_on_board(self, event):
-        x = int(event.x / self.widthgap)
-        y = int(event.y / self.heightgap)
-        self.gamehost.make_a_move(x, y)
-        self.refresh_game_board()
-        print 'Make a move on {0}-{1}'.format(x, y)
-    
+        if not sum(1 for _ in self.gamehost.get_possible_moves(self.current_piece)):
+            print 'No moves. Pass'
+        else:
+            x = int(event.x / self.widthgap)
+            y = int(event.y / self.heightgap)
+            
+            if self.gamehost.make_a_move(self.current_piece, x, y):
+                self.refresh_game_board()
+                self.current_piece = self.gamehost.black_piece if self.current_piece == self.gamehost.white_piece else self.gamehost.white_piece
+                print 'Make a move on {0}-{1}'.format(x, y)
+            else:
+                print 'Bad Move'
+
     def click_on_change_first_hand(self):
         print "AI first : {0}".format(self.aifirst.get())
     
     def click_on_start(self):
-        print 'Start'
+        self.gamehost.start_game()
         
     def click_on_undo(self):
         print 'Undo'
     
-
+    def initialisedAI(self):
+        if self.gamehost.vsai:
+            self.gamehost.initialiseAI()
+        else:
+            self.gamehost.deleteAI()
         
 root = tk.Tk()
 othello_gui = OthelloGUI(root)

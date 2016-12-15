@@ -1,0 +1,2 @@
+class OthelloAI:
+    pass
