@@ -2,17 +2,6 @@
 test-board
 """
 tboard = [
-['.','.','.','.','.','.','.','.'],
-['.','.','1','0','0','.','.','.'],
-['.','.','0','1','1','.','.','.'],
-['.','1','1','0','1','.','.','.'],
-['.','.','.','1','0','.','.','.'],
-['.','.','0','.','.','.','.','.'],
-['.','.','.','.','.','.','.','.'],
-['.','.','.','.','.','.','.','.'],
-]
-
-t1board = [
 ['1','.','.','.','.','.','.','.'],
 ['1','0','.','.','.','.','.','.'],
 ['1','0','.','.','0','.','.','.'],
@@ -21,6 +10,17 @@ t1board = [
 ['1','0','1','1','1','0','0','0'],
 ['1','1','1','1','1','.','.','.'],
 ['1','1','1','0','.','.','.','.'],
+]
+
+t1board = [
+['1','1','1','1','0','1','1','1'],
+['1','0','1','1','1','0','1','0'],
+['1','0','1','0','0','0','1','0'],
+['1','1','1','1','1','1','1','0'],
+['1','1','1','1','0','0','1','.'],
+['1','0','1','1','1','0','0','0'],
+['1','1','1','1','1','0','1','1'],
+['1','1','1','0','1','1','1','1'],
 ]
 
 iboard = [
@@ -185,31 +185,40 @@ class Othello(object):
         return black_moves != 0 and white_moves != 0 and total_black_pieces != 0 and total_white_pieces != 0 and (total_black_pieces + total_white_pieces) != self.board_width * self.board_height
     
     def make_a_move(self, piece, x, y):
-        if not self.isstarted: raise OperationError('Game is not started yet.')
+        if not self.isstarted: return False
         result = self.get_reversion_solution(piece, x, y)
         if len(result):
             self.board[x][y] = piece
             for tx, ty in result:
                 self.reverse_cell(piece, x, y, tx, ty)
-            if not self.check_game_status():
-                self.end_game()
-                return False
-            else:
-                return True
-    
+        if not self.check_game_status():
+            self.end_game()
+        return True
+            
     def start_game(self):
         self.isstarted = True
+        self.board = pd.DataFrame(iboard)
         self.current_player = 'P1'
         print "Game is started."
         
     def end_game(self):
         self.isstarted = False
+        total_black_piece = sum(self.board[self.board==self.black_piece].count())
+        total_white_piece = sum(self.board[self.board==self.white_piece].count())
+        if total_black_piece > total_white_piece : print 'Game over. Black wins.'
+        if total_black_piece == total_white_piece : print 'Game over. Fair.'
+        if total_black_piece < total_white_piece : print 'Game over. White wins.'
+        
         
 class OperationError(Exception):
     pass
         
-#o = Othello(True)
-#o.board
-#for x, y in o.get_possible_moves('0'):
-#    print x, y
-#print o.get_reversion_solution('0', 3, 2)
+o = Othello(True)
+o.board
+o.start_game()
+o.check_game_status()
+for x, y in o.get_possible_moves('0'):
+    print x, y
+print o.get_reversion_solution('0', 7, 4)
+#o.make_a_move('0', 7, 4)
+#o.check_game_status()
