@@ -3,7 +3,7 @@ from Othello import *
 
 class OthelloGUI:
     def __init__(self, master):
-        self.gamehost = Othello(True)
+        self.gamehost = Othello(False)
         self.ai = None
         self.vsai = tk.IntVar()
         self.aifirst = tk.IntVar()

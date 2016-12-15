@@ -35,6 +35,7 @@ iboard = [
 ]
 
 import pandas as pd
+import datetime
 
 class Othello(object):
     def __init__(self, istest):
@@ -44,9 +45,10 @@ class Othello(object):
         self.empty_cell = '.'
         self.board_width = 8
         self.board_height = 8
-        self.isstarted = False
+        self.isstarted = False    
+        self.istest = istest
         
-        if istest:
+        if self.istest:
             self.board = pd.DataFrame(t1board)
         else:
             self.board = pd.DataFrame(iboard)
@@ -182,13 +184,23 @@ class Othello(object):
         white_moves = self.get_possible_moves(self.white_piece)
         total_black_pieces = sum(self.board[self.board == self.black_piece].count())
         total_white_pieces = sum(self.board[self.board == self.white_piece].count())
-        return black_moves != 0 and white_moves != 0 and total_black_pieces != 0 and total_white_pieces != 0 and (total_black_pieces + total_white_pieces) != self.board_width * self.board_height
+        return (black_moves != 0 or white_moves != 0) and total_black_pieces != 0 and total_white_pieces != 0 and (total_black_pieces + total_white_pieces) != self.board_width * self.board_height
     
     def make_a_move(self, piece, x, y):
         if not self.isstarted: return False
         result = self.get_reversion_solution(piece, x, y)
         if len(result):
             self.board[x][y] = piece
+            """
+            log move
+            """
+            if not self.istest: 
+                for i in xrange(self.board_width):
+                    for j in xrange(self.board_height):
+                        self.log.write(self.board[i][j])
+                    self.log.write('\n')
+                self.log.write("{0},{1}\n".format(x, y))
+                
             for tx, ty in result:
                 self.reverse_cell(piece, x, y, tx, ty)
         if not self.check_game_status():
@@ -198,27 +210,37 @@ class Othello(object):
     def start_game(self):
         self.isstarted = True
         self.board = pd.DataFrame(iboard)
-        self.current_player = 'P1'
+        """
+        Create log file for game records
+        """
+        if not self.istest:
+            time = datetime.datetime.now()
+            logfilename = 'game_records/{0}-{1}-{2}-{3}{4}{5}.txt'.format(time.year, time.month, time.day, time.hour, time.minute, time.second)
+            self.log = open(logfilename, 'w+')
+            self.log.write(str(time) + '\n')
+            print "log file : {0}".format(logfilename)
+            
         print "Game is started."
         
     def end_game(self):
         self.isstarted = False
         total_black_piece = sum(self.board[self.board==self.black_piece].count())
         total_white_piece = sum(self.board[self.board==self.white_piece].count())
-        if total_black_piece > total_white_piece : print 'Game over. Black wins.'
-        if total_black_piece == total_white_piece : print 'Game over. Fair.'
-        if total_black_piece < total_white_piece : print 'Game over. White wins.'
-        
+        if total_black_piece > total_white_piece : 
+            print 'Game over. Black wins.'
+            if not self.istest: self.log.write("Finished,B\n")
+        if total_black_piece == total_white_piece : 
+            print 'Game over. Fair.'
+            if not self.istest: self.log.write("Unfinished,N\n")
+        if total_black_piece < total_white_piece : 
+            print 'Game over. White wins.'
+            if not self.istest:  self.log.write("Finished,W\n")
+        if not self.istest:
+            self.log.flush()
+            self.log.close()
         
 class OperationError(Exception):
     pass
         
-o = Othello(True)
-o.board
-o.start_game()
-o.check_game_status()
-for x, y in o.get_possible_moves('0'):
-    print x, y
-print o.get_reversion_solution('0', 7, 4)
-#o.make_a_move('0', 7, 4)
-#o.check_game_status()
+#o = Othello(False)
+#o.board
