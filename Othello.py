@@ -16,8 +16,8 @@ iboard = [
 ['.','.','.','.','.','.','.','.'],
 ['.','.','.','.','.','.','.','.'],
 ['.','.','.','.','.','.','.','.'],
-['.','.','.','.','.','.','.','.'],
-['.','.','.','.','.','.','.','.'],
+['.','.','.','1','0','.','.','.'],
+['.','.','.','0','1','.','.','.'],
 ['.','.','.','.','.','.','.','.'],
 ['.','.','.','.','.','.','.','.'],
 ['.','.','.','.','.','.','.','.'],
@@ -32,15 +32,12 @@ class Othello(object):
         self.empty_cell = '.'
         self.board_width = 8
         self.board_height = 8
+        self.current_player = self.black_piece
         
         if istest:
             self.board = pd.DataFrame(tboard)
         else:
             self.board = pd.DataFrame(iboard)
-            self.board[self.board_width / 2 - 1][self.board_height / 2 - 1] = self.black_piece
-            self.board[self.board_width / 2][self.board_height / 2] = self.black_piece
-            self.board[self.board_width / 2 - 1][self.board_height / 2] = self.white_piece
-            self.board[self.board_width / 2][self.board_height / 2 - 1] = self.white_piece
         
     def get_reversion_solution(self, player, x, y):
         destination = []
@@ -168,12 +165,13 @@ class Othello(object):
                 if len(result) > 0:
                     yield (x, y)
     
-    def make_a_move(self, player, x, y):
-        result = self.get_reversion_solution(player, x, y)
-        if (x, y) in self.get_possible_moves(player):
-            self.board[x][y] = player
+    def make_a_move(self, x, y):
+        result = self.get_reversion_solution(self.current_player, x, y)
+        if (x, y) in self.get_possible_moves(self.current_player):
+            self.board[x][y] = self.current_player
             for tx, ty in result:
-                self.reverse_cell(player, x, y, tx, ty)
+                self.reverse_cell(self.current_player, x, y, tx, ty)
+            self.current_player = self.black_piece if self.current_player == self.white_piece else self.white_piece
         else:
             print "Bad Operation."
             
