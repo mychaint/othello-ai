@@ -56,6 +56,9 @@ class Othello(object):
         else:
             self.board = pd.DataFrame(iboard)
     
+    def initialise_board(self, board):
+        self.board = pd.DataFrame(board)
+        
     def get_reversion_solution(self, player, x, y):
         destination = []
         if self.board[x][y] != self.empty_cell: 
@@ -226,7 +229,6 @@ class Othello(object):
             time = datetime.datetime.now()
             logfilename = 'game_records/{0}-{1}-{2}-{3}{4}{5}.txt'.format(time.year, time.month, time.day, time.hour, time.minute, time.second)
             self.log = open(logfilename, 'w+')
-            self.log.write(str(time) + '\n')
             print "log file : {0}".format(logfilename)
             
         print "Game is started."
