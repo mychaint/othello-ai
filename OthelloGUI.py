@@ -1,6 +1,9 @@
 import Tkinter as tk
 from Othello import *
 
+"""
+GUI for Othello object. User operate game board via this.
+"""
 class OthelloGUI:
     def __init__(self, master):
         self.gamehost = Othello(False)
@@ -61,10 +64,10 @@ class OthelloGUI:
         self.funcboard = tk.Frame(self.master)
         self.funcboard.pack(fill=tk.X, side=tk.TOP)
         
-        self.statuslabel = tk.Label(self.statuboard, text='Status: ')
-        self.modelabel = tk.Label(self.statuboard, text='P V P')
-        self.turnlabel = tk.Label(self.statuboard, text='P first')
-        self.victorylabel = tk.Label(self.statuboard, text='Victor: ')        
+        self.statuslabel = tk.Label(self.statuboard, text='Status: Stoped')
+        self.modelabel = tk.Label(self.statuboard, text='Mode: P V P')
+        self.turnlabel = tk.Label(self.statuboard, text='First: P')
+        self.victorylabel = tk.Label(self.statuboard, text='Victor: -')        
 
         self.aicb = tk.Checkbutton(self.funcboard, text="Vs. AI", variable=self.vsai, command=self.click_on_change_mode)
         self.firstcb = tk.Checkbutton(self.funcboard, text="AI first", variable=self.aifirst, command=self.click_on_change_first_hand)
@@ -122,11 +125,16 @@ class OthelloGUI:
             x = int(event.x / self.widthgap)
             y = int(event.y / self.heightgap)
             
-            if self.gamehost.make_a_move(self.current_piece, x, y):
+            moveresult = self.gamehost.make_a_move(self.current_piece, x, y)
+            if moveresult[0]:
                 self.refresh_game_board()
                 self.current_piece = self.gamehost.black_piece if self.current_piece == self.gamehost.white_piece else self.gamehost.white_piece
+                if moveresult[1]:
+                    self.statuslabel['text'] = 'Status: Stoped'
+                    self.victorylabel['text'] = 'Victor: {0}'.format(moveresult[1])
             else:
                 print 'Bad Move'
+            
     
     def click_on_change_mode(self):
         print "mode {0}".format(self.vsai.get())
@@ -135,6 +143,8 @@ class OthelloGUI:
         print "AI first : {0}".format(self.aifirst.get())
     
     def click_on_start(self):
+        self.statuslabel['text'] = 'Status: Started'
+        self.victorylabel['text'] = 'Victor: -'
         self.gamehost.start_game()
         self.refresh_game_board()
         

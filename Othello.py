@@ -37,6 +37,9 @@ iboard = [
 import pandas as pd
 import datetime
 
+"""
+Game object provides game board, played passively by players.
+"""
 class Othello(object):
     def __init__(self, istest):
         
@@ -186,30 +189,36 @@ class Othello(object):
         total_white_pieces = sum(self.board[self.board == self.white_piece].count())
         return (black_moves != 0 or white_moves != 0) and total_black_pieces != 0 and total_white_pieces != 0 and (total_black_pieces + total_white_pieces) != self.board_width * self.board_height
     
+    """
+    Open functions for players. Calling these functions to play the game
+    """
     def make_a_move(self, piece, x, y):
         if not self.isstarted: return False
         result = self.get_reversion_solution(piece, x, y)
+        victor = None
         if len(result):
-            self.board[x][y] = piece
+            
             """
             log move
             """
             if not self.istest: 
                 for i in xrange(self.board_width):
                     for j in xrange(self.board_height):
-                        self.log.write(self.board[i][j])
+                        self.log.write(self.board[j][i])
                     self.log.write('\n')
-                self.log.write("{0},{1}\n".format(x, y))
-                
+                self.log.write("{0},{1},{2}\n".format(piece, x, y))
+            
+            self.board[x][y] = piece
             for tx, ty in result:
                 self.reverse_cell(piece, x, y, tx, ty)
         if not self.check_game_status():
-            self.end_game()
-        return True
+            victor = self.end_game()
+        return (True, victor)
             
     def start_game(self):
         self.isstarted = True
         self.board = pd.DataFrame(iboard)
+        
         """
         Create log file for game records
         """
@@ -227,20 +236,14 @@ class Othello(object):
         total_black_piece = sum(self.board[self.board==self.black_piece].count())
         total_white_piece = sum(self.board[self.board==self.white_piece].count())
         if total_black_piece > total_white_piece : 
-            print 'Game over. Black wins.'
             if not self.istest: self.log.write("Finished,B\n")
+            return 'B'
         if total_black_piece == total_white_piece : 
-            print 'Game over. Fair.'
             if not self.istest: self.log.write("Unfinished,N\n")
+            return 'N'
         if total_black_piece < total_white_piece : 
-            print 'Game over. White wins.'
             if not self.istest:  self.log.write("Finished,W\n")
+            return 'W'
         if not self.istest:
             self.log.flush()
             self.log.close()
-        
-class OperationError(Exception):
-    pass
-        
-#o = Othello(False)
-#o.board
