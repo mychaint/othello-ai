@@ -19,9 +19,10 @@ class OthelloAI:
             while string:
                 string = record.readline()
                 data.append([x for x in string])
-                if i % 8 == 0:
+                if i != 0 and i % 7 == 0:
                     dataset[]
-                            
+
+
     def find_a_move(self, player, board):
         pass
     

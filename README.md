@@ -9,11 +9,6 @@ This projects contains an Othello game and an AI trained by multiple machine lea
 * [OthelloAI.py] - AI logics.
 * [OthelloGUI.py] - Front-end program.
 
-### Tech
-* heutristic search
-* logistic regression
-* neural network
-* reinforcement learning
 
 ### Status
 Developing...
