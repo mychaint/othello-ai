@@ -10,18 +10,15 @@ class OthelloAI:
     
     def load_play_records(self):
         record_names = [f for f in listdir('game_records') if isfile(join('game_records', f))]
-        for filename in record_names:
-            record = open(filename)
-            string = record.readline()
-            n = 1
-            dataset = {}
-            data = []
-            while string:
-                string = record.readline()
-                data.append([x for x in string])
-                if i != 0 and i % 7 == 0:
-                    dataset[]
-
+        dataset = []
+        for file_name in record_names:
+            data = load_data_from_file(file_name)
+            dataset.extend(data)
+        pass
+    
+    def load_data_from_file(file_name):
+        file = open(file_name)
+        
 
     def find_a_move(self, player, board):
         pass
