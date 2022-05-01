@@ -1,4 +1,4 @@
-import Tkinter as tk
+import tkinter as tk
 from Othello import *
 
 """
@@ -105,8 +105,8 @@ class OthelloGUI:
             self.canvas.create_line(0, j * self.heightgap, self.width, j * self.heightgap)
             j += 1
             
-        for i in xrange(self.gamehost.board_width):
-            for j in xrange(self.gamehost.board_height):
+        for i in range(self.gamehost.board_width):
+            for j in range(self.gamehost.board_height):
                 if self.gamehost.board[i][j] != self.gamehost.empty_cell:
                     self.draw_piece(self.gamehost.board[i][j], i, j)
                     
@@ -133,14 +133,14 @@ class OthelloGUI:
                     self.statuslabel['text'] = 'Status: Stoped'
                     self.victorylabel['text'] = 'Victor: {0}'.format(moveresult[1])
             else:
-                print 'Bad Move'
+                print ('Bad Move')
             
     
     def click_on_change_mode(self):
-        print "mode {0}".format(self.vsai.get())
+        print ("mode {0}".format(self.vsai.get()))
         
     def click_on_change_first_hand(self):
-        print "AI first : {0}".format(self.aifirst.get())
+        print ("AI first : {0}".format(self.aifirst.get()))
     
     def click_on_start(self):
         self.statuslabel['text'] = 'Status: Started'
@@ -149,7 +149,7 @@ class OthelloGUI:
         self.refresh_game_board()
         
     def click_on_undo(self):
-        print 'Undo'
+        print ('Undo')
     
     def initialisedAI(self):
         if self.gamehost.vsai:

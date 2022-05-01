@@ -179,8 +179,8 @@ class Othello(object):
             j = j + jincrement
     
     def get_possible_moves(self, piece):
-        for x in xrange(self.board_width):
-            for y in xrange(self.board_height):
+        for x in range(self.board_width):
+            for y in range(self.board_height):
                 result = self.get_reversion_solution(piece, x, y)
                 if len(result) > 0:
                     yield (x, y)
@@ -205,8 +205,8 @@ class Othello(object):
             log move
             """
             if not self.istest: 
-                for i in xrange(self.board_width):
-                    for j in xrange(self.board_height):
+                for i in range(self.board_width):
+                    for j in range(self.board_height):
                         self.log.write(self.board[j][i])
                     self.log.write('\n')
                 self.log.write("{0},{1},{2}\n".format(piece, x, y))
@@ -229,9 +229,9 @@ class Othello(object):
             time = datetime.datetime.now()
             logfilename = 'game_records/{0}-{1}-{2}-{3}{4}{5}.txt'.format(time.year, time.month, time.day, time.hour, time.minute, time.second)
             self.log = open(logfilename, 'w+')
-            print "log file : {0}".format(logfilename)
+            print ("log file : {0}".format(logfilename))
             
-        print "Game is started."
+        print ("Game is started.")
         
     def end_game(self):
         self.isstarted = False
